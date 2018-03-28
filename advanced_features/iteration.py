@@ -41,7 +41,7 @@ def triangles_0():
 n = 0
 for t in triangles_0():
     print(t)
-    n = n + 1
+    n += 1
     if n == 10:
         break
 
@@ -57,6 +57,6 @@ def triangles_1():
 n = 0
 for t in triangles_1():
     print(t)
-    n = n + 1
+    n += 1
     if n == 5:
         break
