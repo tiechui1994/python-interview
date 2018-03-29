@@ -6,7 +6,7 @@
       __code__    编译的字节码 [函数的详情信息]
       __defaults__  默认的参数元组
       __globals__  定义的全局命名空间的字典
-      __closure__  包含于嵌套作用域相关数据的元组 [存储闭包运行过程中的变量]
+      __closure__  包含于嵌套作用域相关数据的元组(cell对象元组) [存储闭包运行过程中的变量]
 """
 import dis
 
@@ -18,7 +18,7 @@ def add(x):
 
 print(add.__code__)
 print(dir(add.__code__))
-code = add.__code__
+code = add.__code__ # 编译的字节码
 print(code.co_argcount,  # 参数个数
       code.co_cellvars,  # cell对象(闭包函数的变量名集合)
       code.co_code,  # code内容
