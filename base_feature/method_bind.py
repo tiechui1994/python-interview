@@ -9,8 +9,10 @@
 普通方法: 定义在类外的方法, 或者定义在类里且使用了@staticmethod [对于类外的方法,直接调用(有时需要模块导入), 类内的静态方法可以使用类或者类实例调用]
 """
 
+
 class Bind(object):
     hello = 'Hello'
+
     def __init__(self, name):
         self.name = name
 
@@ -19,11 +21,11 @@ class Bind(object):
         return '%s, %s' % (cls.hello, name)
 
     def say(self, prefix):
-        return '%s, %s'%(prefix, self.name)
+        return '%s, %s' % (prefix, self.name)
 
     @staticmethod
     def good(name, word):
-        return '%s is very %s'%(name, word)
+        return '%s is very %s' % (name, word)
 
 
 bind = Bind('Tom')

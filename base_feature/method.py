@@ -10,6 +10,7 @@
 """
 import dis
 
+
 def add(x):
     y = 10
     t = 'www'
@@ -18,7 +19,7 @@ def add(x):
 
 print(add.__code__)
 print(dir(add.__code__))
-code = add.__code__ # 编译的字节码
+code = add.__code__  # 编译的字节码
 print(code.co_argcount,  # 参数个数
       code.co_cellvars,  # cell对象(闭包函数的变量名集合)
       code.co_code,  # code内容

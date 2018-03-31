@@ -20,4 +20,3 @@ print(enu.__next__())
 
 array = [1, 2, -3]
 print(max(1, 22, -33, key=lambda x: x * x))
-

@@ -121,11 +121,6 @@ class DistanceFrom(object):
         return abs(x - self.origin)
 
 
-nums = [1,12,33,100]
+nums = [1, 12, 33, 100]
 nums.sort(key=DistanceFrom(10))  # 按照与10的距离排序
 print(nums)
-
-
-
-
-

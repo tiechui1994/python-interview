@@ -26,7 +26,7 @@ print(pow(2, 3))
 
 print(round(3.362627, 2))
 
-print(sum([1,2,3], 9))
+print(sum([1, 2, 3], 9))
 
 print(bin(10))
 print(oct(10))

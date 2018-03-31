@@ -5,9 +5,12 @@
 """
 
 i = 0
+
+
 def f():
     # print(i)  变量i是局部变量,但是在print语句使用它的时候,它还未被绑定到任何对象之上,所以抛出异常(UnboundLocalError)
     i = 0
+
 
 """
 对于模块代码而言,代码在执行之前,没有经过什么预处理,但是对于函数体而言,代码在运行之前已经经过了一个预处理,
@@ -31,19 +34,23 @@ def f():
 locals函数返回所有的局部变量,但是不会返回嵌套作用域中的变量,实际上没有函数会返回嵌套作用域中的变量
 """
 x = 10
-a = lambda :x
+a = lambda: x
+
+
 def say():
     return x
+
+
 b = say
 
-print(a.__code__.co_code == b.__code__.co_code) # 代码等价
+print(a.__code__.co_code == b.__code__.co_code)  # 代码等价
 
 """
 for语句:for语句在当前作用域中引入新的变量(循环变量)
 Python名字绑定发生在作用域的哪个位置,它都能感知出来
 """
-li = [lambda :j for j in range(10)]
-print(len(li)) # 10
-print(li[0]()) # 9
+li = [lambda: j for j in range(10)]
+print(len(li))  # 10
+print(li[0]())  # 9
 print(li[0].__closure__[0].cell_contents)
-print(li[0].__code__.co_freevars) # 闭包使用的变量名集合
+print(li[0].__code__.co_freevars)  # 闭包使用的变量名集合

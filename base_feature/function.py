@@ -47,7 +47,6 @@ def countdown(start):
         n -= 1
         print('The n is %d' % n)
 
-
     while n > 0:
         display()
         decrement()

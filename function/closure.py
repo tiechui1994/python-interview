@@ -11,6 +11,7 @@ def foo():
 
     return bar
 
+
 bar = foo()
 print(bar.__code__)
 print(dis.dis(bar))
