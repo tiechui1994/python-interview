@@ -91,13 +91,21 @@ class FooFunction(object):
 
 
 class TypeProperty(object):
+    """
+    标签方式管理instance, 必须确保标签的值和TypeProperty实例变量名称不重叠
+    说明: self.default 是没有改变`self.name` 属性之前访问的返回值.
+         setattr() 是给instance增加属性`self.name`, 之后返回的值是属性`self.name`的值
+
+         `self.name` 最终是绑定在属性instance(FooType实例)身上
+    """
+
     def __init__(self, name, types, default=None):
         self.name = "_" + name
         self.type = types
         self.default = default if default else types
-        print(self.name, self.type)
 
     def __get__(self, instance, cls):
+        print(instance.__dict__)
         return getattr(instance, self.name, self.default)
 
     def __set__(self, instance, value):
@@ -113,13 +121,20 @@ class FooType(object):
     name = TypeProperty("name", str)
     num = TypeProperty("num", int, 42)
 
+
+print('=' * 50, '\n')
 print(TypeProperty.__dict__)
 print(FooType.__dict__)
+print(FooType().__dict__)
 
+print('=' * 50, '\n')
 ftype = FooType()
-print(ftype.__dict__)
-
+fooType = FooType()
 print(ftype.name)
 print(ftype.num)
-ftype.name = 'www'
+
+print('=' * 50)
+ftype.name = '1'
+fooType.name = '2'
 print(ftype.name)
+print(fooType.name)
