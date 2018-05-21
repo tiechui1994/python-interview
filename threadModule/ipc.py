@@ -65,9 +65,6 @@ def main():
     queue.join()  # 阻塞,保证队列当中的所有项被处理掉
 
 
-if __name__ == '__main__':
-    main()
-
 """
 管道:
     Pipe([duplex]) 在进程之间创建一条管道,并返回元祖(conn1, conn2),其中conn1和conn2是表示管道两端的Connection对象. 默认情况下,
@@ -87,3 +84,45 @@ if __name__ == '__main__':
         send(obj) obj是与序列化兼容的任意对象
         send_bytes(buffer, [offset, size]) 
 """
+
+
+def pipe_consumer(pipe):
+    input_conn, output_conn = pipe
+    input_conn.close()  # 消费者关闭了input端,使用output通信
+    while True:
+        try:
+            item = output_conn.recv()
+        except EOFError:
+            break
+        print(item)
+    print("Consumer done")
+
+
+def pipe_producer(sequence, send_conn):
+    for item in sequence:
+        send_conn.send(item)
+
+
+"""
+特别注意管道端点的正确管理问题. 如果生产者或消费者中没有使用管道的某个端点,就应该将其关闭.
+管道是由操作系统进行引用计数的,必须在所有进程中关闭管道后才能生成EOFError异常. 因此,在生产者中关闭管道不会有任何效果,除非消费者也
+关闭了相同的管道端点.
+"""
+
+
+def pipe_main():
+    (input_conn, output_conn) = multiprocessing.Pipe()
+    consumer_process = multiprocessing.Process(target=pipe_consumer, args=((input_conn, output_conn),))
+    consumer_process.start()
+
+    # 生产者关闭了output端,使用input通信
+    output_conn.close()
+    sequence = [1, 2, 3, 4]
+    pipe_producer(sequence, input_conn)
+    input_conn.close()  # 很关键,只有生产者关闭了input端,消费者才可能产生产生EOFError
+
+    consumer_process.join()
+
+
+if __name__ == '__main__':
+    pipe_main()
