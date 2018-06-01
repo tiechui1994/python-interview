@@ -12,6 +12,7 @@
 
             close() 关闭进程池,防止进行进一步操作. 如果还有挂起的操作,它们将在工作进程终止之前完成.
             join() 等待所有工作进程退出. 此方法只能在close()或terminate()方法之后调用.
+
             imap(func, iterable, [chunksize])  map函数的版本之一,返回迭代器而非结果列表
             imap_unordered(func, iterable, [chunksize]) 同imap(),结果无序
             map(func, iterbale, [chunksize]) 将可调用对象func应用给iterable中的所有项, 然后以列表的形式返回结果. 通过将iterable
@@ -27,3 +28,46 @@
             successful() 如果调用完成且没有任何异常,返回True. 如果在结果就绪之前调用此方法,将引发AssertionError异常
             wait([timeout]) 等待结果变为可用,timeout是可选的超时.
 """
+import hashlib
+import multiprocessing
+import os
+
+import time
+
+BUFSIZE = 8192
+POOLSIZE = 2
+
+"""
+使用进程池的方法统计目录下的sha512值
+"""
+
+
+def compute_digest(filename):
+    try:
+        f = open(filename, 'rb')
+    except IOError:
+        return None
+    digest = hashlib.sha512()
+    while True:
+        chunk = f.read(BUFSIZE)
+        if not chunk:
+            break
+        digest.update(chunk)
+    f.close()
+    return filename, digest.digest()
+
+
+def build_digest_map(topdir):
+    digest_pool = multiprocessing.Pool(POOLSIZE)
+    allfiles = (os.path.join(path, name) for path, dirs, files in os.walk(topdir) for name in files)
+
+    digest_maps = dict(digest_pool.imap_unordered(compute_digest, allfiles, 200))
+    digest_pool.close()
+    return digest_maps
+
+
+if __name__ == '__main__':
+    s = time.time()
+    digest_map = build_digest_map("/usr/bin")
+    e = time.time()
+    print(len(digest_map), e - s)
