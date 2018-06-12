@@ -105,7 +105,7 @@ contextlib 模块:
             def __exit__(self, *exc_info): // 亮点
                 self.thing.close()
 
-    ContextDecorator: 上下文管理器 + 装饰器 (继承该类其实例既可以作为上下文管理器对象,又可以作为装饰器)
+    ContextDecorator: 上下文管理器 + 装饰器 (此类既实现了装饰功能,也实现了上下文管理协议),此类的实例相当于contextmanager
 
     class context(ContextDecorator):
         def __enter__(self):
@@ -138,3 +138,23 @@ def demo():
 
 with demo() as value:
     print(value)
+
+
+class BaseContextManger(ContextDecorator):
+    def __enter__(self):
+        print('enter')
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        print('exit')
+        return True
+
+
+base_context = BaseContextManger()
+
+
+@base_context
+def f():
+    print('hello')
+
+f()
