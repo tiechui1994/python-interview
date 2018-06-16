@@ -131,3 +131,30 @@ def function():
         print(age)  # 运行时候报错, global是顶级命名空间中名称的绑定, 如果不存在,则抛出异常NameError
 
     return inner
+
+
+"""
+NameError与UnboundLocalError
+"""
+
+
+def check_name_not_exsit_exception():
+    def name_error():
+        print(z)
+
+    def unbound_local_error():
+        print(q)
+        q = 10
+
+    try:
+        name_error()
+    except NameError as e:
+        print(e, type(e))
+
+    try:
+        unbound_local_error()
+    except UnboundLocalError as e:
+        print(e, type(e))
+
+
+check_name_not_exsit_exception()
