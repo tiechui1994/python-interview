@@ -36,6 +36,7 @@
     __getitem__(self, key)  返回self[key]
     __setitem__(self, key, value)  self[key] = value
     __delitem__(self, key)  删除self[key]
+    __missing__(self, key)  为缺失的键提供默认值
     __contains__(self, item) 如果item在self中,返回True, 否则返回False
 
     切片操作实现的基础是 __getitem__, __setitem__, __delitem__
@@ -56,10 +57,28 @@
 
     __enter__(self)
     __exit__(self, type, value, tb)
+
+    11. 可序列化
+    __copy__(self)   浅层复制
+    __deepcopy__(self, memodict={}) 深层复制
+    __getstate__(self)  在picking之前获取对象的状态. pickle.dump(x, file)
+    __reduce__(self)  序列化某对象  pickle.dump(x, file)
+    __getnewargs__(self) 控制unpacking过程中对象的创建方式  pickle.load(file)
+    __setstate__(self, state) 在unpacking之后还原对象的状态, pickle.load(file)
+
+    12. 神奇的内容
+    __slots__(cls)  只定义特定计划的某些属性
+    __get__(self, instance, owner)
+    __set__(self, instance, value)
+    __delete__(self, instance)
 """
 
 
 class Object(object):
+    @staticmethod
+    def __slots__(cls):
+        pass
+
     def __iter__(self):
         pass
 
