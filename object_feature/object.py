@@ -76,7 +76,7 @@
     8. 可调用接口
     __call__(self, ...)  可以模拟函数的行为. [模拟函数的对象可以用于创建仿函数(functor)或代理(proxy)]
 
-    9. 上下文管理协议
+    9. 上下文管理协议(参考interview当中的with)
     with context [as var]:
         statements
     执行with语句时, 就会调用__enter__()方法. 该方法的返回值被放入有可选的as var说明符指定的变量中. 只要控制流离开
@@ -95,8 +95,14 @@
     __getnewargs__(self) 控制unpacking过程中对象的创建方式  pickle.load(file)
     __setstate__(self, state) 在unpacking之后还原对象的状态, pickle.load(file)
 
+    11. 子类和父类关系
+    __instancecheck__(self, instance) isinstance(x, Class) 控制某个对象是否是该Class的实例
+    __subclasscheck__(self, subclass) issubclass(Class, ParentClass) 控制某个类是否是该Class的子类
+    __subclasshook__(cls, subclass)  issubclass(Class, BaseClass) 控制某个类是是否是该抽象基类的子类
+
     11. 神奇的内容
-    __slots__(cls)  只定义特定计划的某些属性
+    __slots__属性  只定义特定计划的某些属性
+    __mro__属性  子类解析父类顺序的元组(C3算法)
     __get__(self, instance, owner)
     __set__(self, instance, value)
     __delete__(self, instance)
