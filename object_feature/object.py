@@ -47,7 +47,7 @@
     __delattr__(self, name) 删除属性self.name  即: del object.name
     __dir__(self) 列出所有属性和方法  即: dir(object)
 
-    *6. 描述符类
+    *6. 描述符类(参考class_feature里面的descriptor)
     __get__(self, instance, owner)
     如果class定义了它,则这个class就可以称为descriptor. owner是所有者的类,instance是访问descriptor的实例,
     如果不是通过实例访问,而是通过类访问的话, instance则为None.(descriptor的实例自己访问自己是不会触发__get__,
