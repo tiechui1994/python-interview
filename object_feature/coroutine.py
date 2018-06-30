@@ -43,4 +43,3 @@ tasks = [
     asyncio.async(countdown("B", 3))]
 loop.run_until_complete(asyncio.wait(tasks))
 loop.close()
-
