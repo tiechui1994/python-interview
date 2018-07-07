@@ -69,10 +69,11 @@ class Circle(object):
         return 2 * math.pi * self.radius
 
 
-c = Circle(4.0)
-print(c.radius)
-print(c.area)
-print(c.perimeter)
+def test_property():
+    c = Circle(4.0)
+    print(c.radius)
+    print(c.area)
+    print(c.perimeter)
 
 
 class Foo(object):
@@ -98,9 +99,10 @@ class Foo(object):
         raise TypeError('Can not delete name')
 
 
-f = Foo('ww')
-name = f.name
-f.name = 'Johe'
+def test_property_function():
+    f = Foo('ww')
+    name = f.name
+    f.name = 'Johe'
 
 
 class FooFunction(object):
@@ -136,7 +138,9 @@ class TypeProperty(object):
         self.default = default if default else types
 
     def __get__(self, instance, cls):
-        print(instance.__dict__)
+        print('__get__')
+        print(self, instance, cls, sep='\n')
+        print('+' * 50)
         return getattr(instance, self.name, self.default)
 
     def __set__(self, instance, value):
@@ -153,19 +157,24 @@ class FooType(object):
     num = TypeProperty("num", int, 42)
 
 
-print('=' * 50, '\n')
-print(TypeProperty.__dict__)
-print(FooType.__dict__)
-print(FooType().__dict__)
+def test_descriptor():
+    print('=' * 50, '\n')
+    print(TypeProperty.__dict__)
+    print(FooType.__dict__)
+    print(FooType().__dict__)
 
-print('=' * 50, '\n')
-ftype = FooType()
-fooType = FooType()
-print(ftype.name)
-print(ftype.num)
+    print('=' * 50, '\n')
+    ftype = FooType()
+    fooType = FooType()
+    print(ftype.name)
+    print(ftype.num)
 
-print('=' * 50)
-ftype.name = '1'
-fooType.name = '2'
-print(ftype.name)
-print(fooType.name)
+    print('=' * 50)
+    ftype.name = '1'
+    fooType.name = '2'
+    print(ftype.name)
+    print(fooType.name)
+
+
+if __name__ == '__main__':
+    test_descriptor()

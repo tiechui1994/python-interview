@@ -13,11 +13,15 @@ headers = {
     'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
     'Origin': 'http://www.shclearing.com',
     'Upgrade-Insecure-Requests': '1',
-    'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/45.0.2454.93 Safari/537.36',
+    'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) '
+                  'Chrome/45.0.2454.93 Safari/537.36',
     'Content-Type': 'application/x-www-form-urlencoded',
     'Accept-Encoding': 'gzip, deflate',
     'Accept-Language': 'zh-CN,zh;q=0.8',
-    'Cookie': '_ga=GA1.2.1076225437.1465265795; JSESSIONID=24XcXXCb1bkkKWnKn1LLNBqGTR8qnfmcmf3p5T2pw2TwpNCytnfp!301927905; HDSESSIONID=fhwLXXLPrBqXwsvCyqKL1lCbp5QmGDxxGJ4wd8vrfhr2ksgJcpvf!1660475047; Hm_lvt_d885bd65f967ea9372fc7200bc83fa81=1465223724; Hm_lpvt_d885bd65f967ea9372fc7200bc83fa81=1465354426'
+    'Cookie': '_ga=GA1.2.1076225437.1465265795; JSESSIONID=24XcXXCb1bkkKWnKn1LLNBqGTR8qnfmcmf'
+              '3p5T2pw2TwpNCytnfp!301927905; HDSESSIONID=fhwLXXLPrBqXwsvCyqKL1lCbp5QmGDxxGJ4w'
+              'd8vrfhr2ksgJcpvf!1660475047; Hm_lvt_d885bd65f967ea9372fc7200bc83fa81=1465223724;'
+              ' Hm_lpvt_d885bd65f967ea9372fc7200bc83fa81=1465354426'
 }
 
 url1 = 'http://www.shclearing.com/xxpl/fxpl/index.html'
