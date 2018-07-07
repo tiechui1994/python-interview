@@ -30,17 +30,18 @@
 
     属性的调用方法顺序:
         obj.x => obj.__getattribute__('x') => type(obj).__dict__['x'].__get__(obj, type(obj))
-        其通过优先级链来实现，该优先级链给数据描述器优先于实例变量，实例变量优先于非数据描述器，
+        其通过优先级链来实现，该优先级链给数据描述器优先于实例变量，实例变量优先于非数据描述器，(重点)
         并且将最低优先级分配给__getattr__()(如果提供的话).
 
-        Object.x => type.__getattribute__(Object, 'x') => Object.__dict__['x].__get__(None, Object)
-        "type.__getattribute__ 方法"
+        Object.x => type.__getattribute__(Object, 'x') => Object.__dict__['x'].__get__(None, Object)
+        **"type.__getattribute__ 方法"
         def __getattribute__(self, key):
             v = object.__getattribute__(self, key)
             if hasattr(v, '__get__'):
                 return v.__get__(None, self)
             return v
 
+    **重点:
     实例对象[对象属性]的字典中有与定义的描述符[类属性]有相同名字的对象时,描述符优先,会覆盖掉实例属性. python会改写默认的行为,
     去调用描述符的方法来代替. [在类的__dict__中保留该属性, 在实例的__dict__中去除该属性]
 
@@ -72,24 +73,28 @@ class Descriptor(object):
         self.ins_val = 10
 
 
-print(Descriptor.__dict__)  # {'cls_val': 1}
+def test_property():
+    """
+    属性测试
+    :return:
+    """
+    print(Descriptor.__dict__)  # {'cls_val': 1}
 
-des = Descriptor()
-print(des.__dict__)  # {'ins_val': 10}
+    des = Descriptor()
+    print(des.__dict__)  # {'ins_val': 10}
 
-# 更改实例des的属性cls_val,只是新增了该属性,并不影响类Descriptor的属性cls_val
-des.cls_val = 100
-print(des.__dict__)  # {'ins_val': 10, 'cls_val': 100}
-print(Descriptor.__dict__)  # {'cls_val': 1}
+    # 更改实例des的属性cls_val,只是新增了该属性,并不影响类Descriptor的属性cls_val
+    des.cls_val = 100
+    print(des.__dict__)  # {'ins_val': 10, 'cls_val': 100}
+    print(Descriptor.__dict__)  # {'cls_val': 1}
 
-# 更改类 Descriptor 的属性cls_val, 并不影响实例des的的cls_val
-Descriptor.cls_val = 11
-print(Descriptor.__dict__)  # {'cls_val': 11}
-print(des.__dict__)  # {'ins_val': 10, 'cls_val': 100}
-print("\n\n")
+    # 更改类 Descriptor 的属性cls_val, 并不影响实例des的的cls_val
+    Descriptor.cls_val = 11
+    print(Descriptor.__dict__)  # {'cls_val': 11}
+    print(des.__dict__)  # {'ins_val': 10, 'cls_val': 100}
 
+    # 结论: 实例属性并不包含类的属性(一切都是对象, 对象之间的属性是互不干扰的)
 
-# 结论: 实例属性并不包含类的属性
 
 class TypeProperty(object):
     def __get__(self, instance, owner):
@@ -98,6 +103,8 @@ class TypeProperty(object):
         print('instance: \t', instance)
         print('owner \t\t', owner)
         print('=' * 70, "\n")
+        if not instance:
+            return getattr(instance, owner)
 
     def __set__(self, instance, value):
         print('__set__')
@@ -105,6 +112,8 @@ class TypeProperty(object):
         print('instance: \t', instance)
         print('value \t\t', value)
         print('=' * 70, "\n")
+        if not instance:
+            setattr(type(instance), instance, value)
 
 
 class FooType(object):
@@ -112,26 +121,44 @@ class FooType(object):
 
     def __init__(self):
         self.x = 100
+        print(self.x)
+
+    def __getattribute__(self, item):
+        print('__getattribute__')
+        return super(FooType, self).__getattribute__(item)
 
 
-print('Access Class Property')
-# cls_x = FooType.x
-# cls_x = type.__getattribute__(FooType, 'x')
-# cls_x = FooType.__dict__['x'].__get__(None, FooType)
+def test_property_access_order():
+    """
+    TypeProperty是一个描述符
+    FooType持有描述符类属性
 
+    测试类属性和实例属性的访问顺序
+    :return:
+    """
+    """
+    顺序: Object.x => type.__getattribute__(Object, 'x') => Object.__dict__['x'].__get__(None, Object)
+    type.__getattribute__(Object, 'x'): 只需要访问type拥有的属性即可, 如果直接返回,则可以证明
+    Object.__dict__['x'].__get__(None, Object): 访问一个type不存在的属性, 但是Object独有的属性, 即可证明
+    """
+    # print('Access Class Property')
+    # cls_x = FooType.x
+    # cls_x = type.__getattribute__(FooType, 'x')
+    # cls_x = FooType.__dict__['x'].__get__(None, FooType)
 
-print('Access Instance Property')
+    """
+    顺序: obj.x => obj.__getattribute__('x') => type(obj).__dict__['x'].__get__(obj, type(obj))
 
-
-# foo = FooType()
-# ins_y = foo.y
-# ins_y = foo.__getattribute__('y')
-# ins_y = FooType.__dict__['y'].__get__(foo, FooType) 尝试调用
-
-
-# ins_x = foo.x
-# ins_x = foo.__getattribute__('x')
-# ins_x = FooType.__dict__['x'].__get__(foo, FooType) 尝试调用
+    """
+    foo = FooType()
+    print('Access Instance Property')
+    # ins_y = foo.y
+    # ins_y = foo.__getattribute__('y')
+    # ins_y = FooType.__dict__['y'].__get__(foo, FooType)  # 尝试调用
+    #
+    ins_x = foo.x
+    ins_x = foo.__getattribute__('x')
+    ins_x = FooType.__dict__['x'].__get__(foo, FooType)  # 尝试调用
 
 
 def descriptor_attrs(obj):
@@ -170,8 +197,10 @@ def is_data_descriptor(obj):
     return bool(is_descriptor(obj)) & bool(data_descriptor_attrs(obj))
 
 
-print(dir(object))
-print(is_descriptor(int))
+def test_property_theory():
+    print(dir(object))
+    print(is_descriptor(int))
+
 
 """
 案例Property: @property的等价实现, 一个描述符对象
@@ -233,19 +262,21 @@ class D(object):
         return x
 
 
-d = D()
+def test_function():
+    d = D()
 
-# 通过类字典访问不会调用__get__, 它只是返回底层函数对象.
-print(D.__dict__['f'])  # <function D.f at 0x00000052ED7652F0>
-# 来自类带点访问调用__get __(), 它只是返回底层不变的函数对象.
-print(D.f)  # <function D.f at 0x00000052ED7652F0>
-# 来自实例带点访问调用__get __(), 它返回包装在绑定方法对象中的函数.
-print(d.f)  # <bound method D.f of <__main__.D object at 0x00000063D3597048>>
+    # 通过类字典访问不会调用__get__, 它只是返回底层函数对象.
+    print(D.__dict__['f'])  # <function D.f at 0x00000052ED7652F0>
+    # 来自类带点访问调用__get __(), 它只是返回底层不变的函数对象.
+    print(D.f)  # <function D.f at 0x00000052ED7652F0>
+    # 来自实例带点访问调用__get __(), 它返回包装在绑定方法对象中的函数.
+    print(d.f)  # <bound method D.f of <__main__.D object at 0x00000063D3597048>>
 
-# 在绑定方法对象函数的内部, 绑定方法存储底层函数,绑定实例和绑定实例的类.
-print(d.f.__func__)  # 底层函数
-print(d.f.__class__)  # 绑定实例的类
-print(d.f.__self__)  # 绑定实例
+    # 在绑定方法对象函数的内部, 绑定方法存储底层函数,绑定实例和绑定实例的类.
+    print(d.f.__func__)  # 底层函数
+    print(d.f.__class__)  # 绑定实例的类
+    print(d.f.__self__)  # 绑定实例
+
 
 """
 非数据描述器提供了一个简单的机制用于将绑定函数变换为方法的常见模式.
@@ -302,6 +333,11 @@ class E(object):
     f = classmethod(f)
 
 
-print("=" * 50, '\n')
-print(E.f(3))
-print(E().f(3))
+def test_static_method():
+    print("=" * 50, '\n')
+    print(E.f(3))
+    print(E().f(3))
+
+
+if __name__ == '__main__':
+    test_property_access_order()

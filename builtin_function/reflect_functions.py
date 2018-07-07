@@ -17,7 +17,7 @@ dir([object])	①不带参数时,返回当前范围内的变量、方法和定�
                 ②如果是类实例化的对象, 且实现了__dir__()方法,则调用该对象的__dir__()方法.
                 ③带参数的其他情况时,返回参数的属性,方法列表.
 callable(object)  检查对象object是否可调用, ①类是可以被调用的;
-                                         ②实例是不可以被调用的,除非类中声明了__call__方法
+                                          ②实例是不可以被调用的,除非类中声明了__call__方法
 
 delattr(object, name)	删除object对象名为name的属性
 getattr(object, name [,defalut])	获取一个类的属性
