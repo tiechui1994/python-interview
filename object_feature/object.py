@@ -42,6 +42,8 @@
         2.自定义getattribute的时候防止无限递归(因为getattribute在访问属性的时候一直会被调用,自定义的
         getattribute方法里面同时需要返回相应的属性,通过self.__dict__取值会继续向下调用getattribute,
         造成循环调用)
+        3. 同时覆盖掉getattribute和getattr的时候，在getattribute中需要模仿原本的行为抛出AttributeError
+        或者手动调用getattr
 
     __setattr__(self, name, value)  设置self.name = value 即: object.name = value
     __delattr__(self, name) 删除属性self.name  即: del object.name
