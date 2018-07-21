@@ -57,6 +57,7 @@ def f3():
     c2 = A()
     c1.t = c2
     c2.t = c1
+    print(gc.garbage)
     del c1
     del c2
     print(gc.garbage)

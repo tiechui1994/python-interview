@@ -50,7 +50,8 @@
 
     描述符正常工作的条件:
         1. 把描述符放在类的层次上
-        2. 确保实例的数据只属于实例本身[描述符类的实现方面], 即instance和属性进行绑定(instance添加自己的属性(标签), 使用字典管理instance)
+        2. 确保实例的数据只属于实例本身[描述符类的实现方面], 即instance和属性进行绑定(instance添加自己的属性(标签),
+        使用字典管理instance)
         3. 注意不可哈希的描述符所有者(针对使用了字典管理instance)
 
 
@@ -167,7 +168,7 @@ def descriptor_attrs(obj):
     :param obj:
     :return:
     """
-    return set(['__get__', '__set__', '__delete__']).intersection(dir(obj))
+    return {'__get__', '__set__', '__delete__'}.intersection(obj.__dict__)
 
 
 def is_descriptor(obj):
@@ -185,7 +186,7 @@ def data_descriptor_attrs(obj):
     :param obj:
     :return:
     """
-    return set(['__set__']) & set(dir(obj))
+    return {'__set__'} & set(dir(obj))
 
 
 def is_data_descriptor(obj):
@@ -200,15 +201,20 @@ def is_data_descriptor(obj):
 def test_property_theory():
     print(dir(object))
     print(is_descriptor(int))
+    print(dir(int))
+    print(is_descriptor(int))
+    print(dir(dict))
+    print(is_descriptor(dict))
 
 
 """
-案例Property: @property的等价实现, 一个描述符对象
+案例Property: @property的等价实现, 一个描述符对象, 方法的绑定
 """
 
 
 class Property(object):
     def __init__(self, fget=None, fset=None, fdel=None, doc=None):
+        print(fget, fset, fdel, id(self))
         self.fget = fget
         self.fset = fset
         self.fdel = fdel
@@ -217,6 +223,7 @@ class Property(object):
         self.__doc__ = doc
 
     def __get__(self, obj, objtype=None):
+        print(self, obj, objtype, sep='\n')
         if obj is None:
             return self
         if self.fget is None:
@@ -247,6 +254,27 @@ class Property(object):
         return type(self)(self.fget, self.fset, fdel, self.__doc__)
 
 
+import random
+
+
+class Student(object):
+    @Property
+    def name(self):
+        if hasattr(self, '_key'):
+            return self._key
+        return ''.join(random.sample('abcdefghijklmnopqrstuvwxyz', 5))
+
+    @name.setter
+    def name(self, value):
+        self._key = value
+
+
+def test_property_access():
+    stu = Student()
+    stu.name = 100
+    print(stu.name)
+
+
 """
 案例函数Function的实现:
 """
@@ -267,7 +295,7 @@ def test_function():
 
     # 通过类字典访问不会调用__get__, 它只是返回底层函数对象.
     print(D.__dict__['f'])  # <function D.f at 0x00000052ED7652F0>
-    # 来自类带点访问调用__get __(), 它只是返回底层不变的函数对象.
+    # 来自类带点访问调用__get__(), 它只是返回底层不变的函数对象.
     print(D.f)  # <function D.f at 0x00000052ED7652F0>
     # 来自实例带点访问调用__get __(), 它返回包装在绑定方法对象中的函数.
     print(d.f)  # <bound method D.f of <__main__.D object at 0x00000063D3597048>>
@@ -340,4 +368,4 @@ def test_static_method():
 
 
 if __name__ == '__main__':
-    test_property_access_order()
+    test_property_access()
