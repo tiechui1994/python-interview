@@ -37,7 +37,6 @@ weakref 模块:
     weakref.WeakSet
 """
 import weakref
-weakref.ref()
 
 i1 = 10
 i2 = 10
