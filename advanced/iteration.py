@@ -1,8 +1,9 @@
 """
 迭代器:
     iter(iterable) -> iterator
-    iter(callable, sentinel) -> iterator 说明: callable是回调函数(没有任何参数,但是必须有返回值),在进行迭代的时候运行.
-                                              sentinel是哨兵(一个确切的值),在执行迭代的时候,是迭代结束的条件(callback的返回值和sentinel值相等结束迭代)
+    iter(callable, sentinel) -> iterator 说明: callable是回调函数(没有任何参数,但是必须有返回值),在进行迭代的时
+        候运行.sentinel是哨兵(一个确切的值),在执行迭代的时候,是迭代结束的条件(callback的返回值和sentinel值相等结束迭
+        代)
 """
 
 from collections import Iterable

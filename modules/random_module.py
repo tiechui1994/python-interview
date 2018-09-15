@@ -35,8 +35,8 @@ random 模块: 提供各种用于生成伪随机数的函数, 以及根据不同
 注意:
     1.该模块的函数非线程安全. 不同线程中设生成随机数,就应当使用锁定以防止并发访问
     2.该模块生成的随机数都是确定的,不应用于密码
-    3.通过实现random.Random的子类病实现random(),seed(),getstate(),setstate()和jumpahead(), 就可以创建新的随机数生成
-    器类型. 实际上,该模块的其他函数在内部都作为Random的方法实现的
-    4. 该模块提供了两种生成器类--WichmannHill(早期Python版本所使用的生成器)和SystemRandom(使用系统随机数生成器os.urandom()
-    生成随机数).
+    3.通过实现random.Random的子类病实现random(),seed(),getstate(),setstate()和jumpahead(), 就可以创建新的随机
+    数生成器类型. 实际上,该模块的其他函数在内部都作为Random的方法实现的
+    4. 该模块提供了两种生成器类--WichmannHill(早期Python版本所使用的生成器)和SystemRandom(使用系统随机数生成器
+    os.urandom()生成随机数).
 """

@@ -13,7 +13,8 @@ Counter       dict子类, 用于统计可迭代的集合功能.
 OrderedDict   dict子类, 有序字典(按照添加的顺序)
 
 defaultdict   dict子类, 调用工厂函数来提供缺失值的子类
-  传入一个工厂方法,工厂方法没有参数. 在访问dict的某个key不存在时(默认的字典抛异常), 在该dict当中添加一个key,且值为工厂方法产生的值.
+  传入一个工厂方法,工厂方法没有参数. 在访问dict的某个key不存在时(默认的字典抛异常), 在该dict当中添加一个key,且值为工厂方
+  法产生的值.
   注意: 添加key的操作是在__getitem__当中调用__missing__完成的. 例如, dict[key]方式去获取key的值, dict.pop()方法
 
 UserDict      对字典对象进行包装, 以便更容易的字典子类化

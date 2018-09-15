@@ -1,11 +1,12 @@
 """
 排序函數:
-    sorted(iterable, key=None, reverse=False)  key是对每个迭代对象的处理函数,
-                                               str.lower()
-                                               operator.itemgetter() 以tuple,或list,或dict的位置排序(可以是多个)
-                                               operator.attrgetter() 以对象的属性排序(可以是多个)
+    sorted(iterable, key=None, reverse=False)
+        key是对每个迭代对象的处理函数,
+           str.lower()
+           operator.itemgetter() 以tuple,或list,或dict的位置排序(可以是多个)
+           operator.attrgetter() 以对象的属性排序(可以是多个)
 
-                                               reverse默认是升序
+           reverse默认是升序
 """
 from operator import itemgetter, attrgetter
 
