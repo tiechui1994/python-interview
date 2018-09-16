@@ -2,7 +2,6 @@
 协程调度
 """
 import random
-
 import time
 
 
@@ -43,4 +42,4 @@ if __name__ == '__main__':
         print('Producing...')
         next(producer)
     end = time.time()
-    print((end-start))
+    print((end - start))
