@@ -1,5 +1,7 @@
+import random
 import time
 import asyncio
+from threading import Thread
 
 """
 Python协程:
@@ -211,4 +213,93 @@ def stop_loop():
         loop.close()
 
 
-stop_loop()
+"""
+不同线程的事件循环:
+    一般情况下, 先创建事件循环, 然后将协程加入到时间循环当中, 最后启动事件循环.
+
+    通常需要, 动态将协程加入到事件循环当中, 可以使用的思路:
+    当前线程创建一个事件循环, 然后再创建一个线程, 在新线程中启动事件循环.
+"""
+
+
+def dynamic_add_func():
+    """
+    主线程中创建一个new_loop, 然后在子线程中开启一个无限事件循环.
+    新线程中会按照顺序执行 call_soon_threadsafe()方法注册的函数, 同时主线程不会被block
+    """
+
+    def start_loop(loop):
+        asyncio.set_event_loop(loop)
+        loop.run_forever()
+
+    def more_work(x):
+        print("work {}".format(x))
+        time.sleep(x)
+        print("finish {}".format(x))
+
+    new_loop = asyncio.new_event_loop()
+    t = Thread(target=start_loop, args=(new_loop,))
+    t.start()
+
+    new_loop.call_soon_threadsafe(more_work, 6)
+    new_loop.call_soon_threadsafe(more_work, 3)
+
+
+def dynamic_add_corroutine():
+    """
+    主线程中创建一个new_loop, 然后在子线程中开启一个无限事件循环.
+    主线程通过 run_coroutine_threadsafe 新注册协程对象. 这样就可以实现在子线程中进行事件循环
+    并发操作, 同时主线程不会被block
+    """
+
+    def start_loop(loop):
+        asyncio.set_event_loop(loop)
+        loop.run_forever()
+
+    async def more_work(x):
+        print("work {}".format(x))
+        await asyncio.sleep(x)
+        print("finish {}".format(x))
+
+    new_loop = asyncio.new_event_loop()
+    t = Thread(target=start_loop, args=(new_loop,))
+    t.start()
+
+    asyncio.run_coroutine_threadsafe(more_work(6), new_loop)
+    asyncio.run_coroutine_threadsafe(more_work(3), new_loop)
+
+
+"""
+停止子线程:
+    上面的例子, 停止子线程会抛出异常.
+    通常是做法是对主线程的添加协程到事件循环进行catch, 在出现KeyboardInterrupt的时候关闭掉事件循环.
+    这样看似解决了问题, 但是实际上当主线程发生KeyboardInterrupt之后, 子线程并没有退出. 为了解决这个问题,
+    可以设置子线程为守护线程, 当主线程结束的时候, 子线程随机退出.
+"""
+
+
+def stop_dynamic_add_corroutine():
+    def start_loop(loop):
+        asyncio.set_event_loop(loop)
+        loop.run_forever()
+
+    async def more_work(x):
+        print("work {}".format(x))
+        await asyncio.sleep(x)
+        print("finish {}".format(x))
+
+    new_loop = asyncio.new_event_loop()
+    t = Thread(target=start_loop, args=(new_loop,))
+    t.setDaemon(True)
+    t.start()
+
+    try:
+        while True:
+            time.sleep(random.random())
+            asyncio.run_coroutine_threadsafe(more_work(random.random() * 10), new_loop)
+    except KeyboardInterrupt as e:
+        print(e)
+        new_loop.stop()
+
+
+stop_dynamic_add_corroutine()
